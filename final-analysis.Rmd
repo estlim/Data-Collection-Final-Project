@@ -1,0 +1,20 @@
+---
+title: "Violence and Female Representation in Movies"
+author: "Esther Lim, Ethan Sanders, Kamila Kwiatkowska"
+date: "2026-04-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+
+film_data <- read.csv("data/violence-bechdel-data.csv")
+
+```
+
+# Final Project Analysis
+
+R Project and Markdown document set up
+

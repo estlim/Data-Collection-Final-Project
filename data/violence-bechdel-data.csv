@@ -1,0 +1,68 @@
+no.,year,box_office,film,gen_dir,gen_dir_coded,result,result_coded,bechdel_test,bechdel,bechdel_coded,violence,violence_coded
+1,2026,212918884,One Battle after Another,male,0,Winner,1,1,3,Pass,Moderate,2
+2,2026,43514912,Bugonia,male,0,Nominee,0,1,3,Pass,Severe,3
+3,2026,634042436,F1,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+4,2026,144496,Frankenstein,male,0,Nominee,0, 1/3,1,Fail,Severe,3
+5,2026,106361688,Hamnet,female,1,Nominee,0,1,3,Pass,Mild,1
+6,2026,180177244,Marty Supreme,male,0,Nominee,0, 2/3,2,Fail,Moderate,2
+7,2026,19204269,The Secret Agent,male,0,Nominee,0,1,3,Pass,Severe,3
+8,2026,23392972,Sentimental Value,male,0,Nominee,0,1,3,Pass,Mild,1
+9,2026,370233701,Sinners,male,0,Nominee,0,1,3,Pass,Severe,3
+10,2026,,Train Dreams,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+12,2025,57395612,Anora,male,0,Winner,1,1,3,Pass,Mild,1
+13,2025,50450120,The Brutalist,male,0,Nominee,0, 2/3,2,Fail,Moderate,2
+14,2025,140508652,A Complete Unknown,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+15,2025,127848258,Conclave,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+16,2025,714844358,Dune: Part Two,male,0,Nominee,0,1,3,Pass,Moderate,2
+17,2025,16317120,Emilia Pérez,male,0,Nominee,0,1,3,Pass,Moderate,2
+18,2025,36425634,I'm Still Here,male,0,Nominee,0,1,3,Pass,Mild,1
+19,2025,3016380,Nickel Boys,male,0,Nominee,0, 2/3,2,Fail,Moderate,2
+20,2025,77316812,The Substance,female,1,Nominee,0,1,3,Pass,Severe,3
+21,2025,758790057,Wicked Part 1,male,0,Nominee,0,1,3,Pass,Mild,1
+23,2024,975811333,Oppenheimer,male,0,Winner,1, 2/3,2,Fail,Mild,1
+24,2024,22483370,American Fiction,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+25,2024,36046727,Anatomy of a Fall,female,1,Nominee,0,1,3,Pass,Mild,1
+26,2024,1447138421,Barbie,female,1,Nominee,0,1,3,Pass,None,0
+27,2024,48822847,The Holdovers,male,0,Nominee,0,1,3,Pass,None,0
+28,2024,158772599,Killers of the Flower Moon,male,0,Nominee,0,1,3,Pass,Severe,3
+29,2024,383532,Maestro,male,0,Nominee,0,1,3,Pass,None,0
+30,2024,42748888,Past Lives,female,1,Nominee,0,1,3,Pass,None,0
+31,2024,117625455,Poor Things,male,0,Nominee,0,1,3,Pass,Severe,3
+32,2024,52693249,The Zone of Interest,male,0,Nominee,0,1,3,Pass,Mild,1
+34,2023,147946670,Everything Everywhere All at Once,male,0,Winner,1,1,3,Pass,Moderate,2
+35,2023,,All Quiet on the Western Front,male,0,Nominee,0,0/3,0,Fail,Severe,3
+36,2023,2334484620,Avatar: The Way of Water,male,0,Nominee,0,1,3,Pass,Moderate,2
+37,2023,50250625,The Banshees of Inisherin,male,0,Nominee,0,1,3,Pass,Moderate,2
+38,2023,288670284,Elvis,male,0,Nominee,0, 1/3,1,Fail,None,0
+39,2023,45614213,The Fabelmans,male,0,Nominee,0, 2/3,2,Fail,Mild,1
+40,2023,29177163,Tár,male,0,Nominee,0,1,3,Pass,Mild,1
+41,2023,1503997086,Top Gun: Maverick,male,0,Nominee,0,1,3,Pass,Mild,1
+42,2023,26195743,Triangle of Sadness,male,0,Nominee,0,1,3,Pass,Moderate,2
+43,2023,9276103,Women Talking,female,1,Nominee,0,1,3,Pass,Moderate,2
+45,2022,1905058,CODA,female,1,Winner,1,1,3,Pass,None,0
+46,2022,49158709,Belfast,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+47,2022,791863,Don't Look Up,male,0,Nominee,0,1,3,Pass,Mild,1
+48,2022,15355152,Drive My Car,male,0,Nominee,0,1,3,Pass,None,0
+49,2022,410668500,Dune Part 1,male,0,Nominee,0,1,3,Pass,Moderate,2
+50,2022,39529285,King Richard,male,0,Nominee,0,1,3,Pass,Moderate,2
+51,2022,33276075,Licorice Pizza,male,0,Nominee,0,1,3,Pass,None,0
+52,2022,39629195,Nightmare Alley,male,0,Nominee,0, 1/3,1,Fail,Severe,3
+53,2022,271009,The Power of the Dog,female,1,Nominee,0,0/3,0,Fail,Moderate,2
+54,2022,76016171,West Side Story,male,0,Nominee,0,1,3,Pass,Moderate,2
+56,2021,39458207,Nomadland,female,1,Winner,1,1,3,Pass,None,0
+57,2021,24048935,The Father,male,0,Nominee,0, 2/3,2,Fail,Mild,1
+58,2021,7478009,Judas and the Black Messiah,male,0,Nominee,0, 2/3,2,Fail,Moderate,2
+59,2021,,Mank,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+60,2021,15281324,Minari,male,0,Nominee,0,1,3,Pass,None,0
+61,2021,18854166,Promising Young Woman,male,0,Nominee,0,1,3,Pass,Moderate,2
+62,2021,516521,Sound of Metal,male,0,Nominee,0, 1/3,1,Fail,Mild,1
+63,2021,,The Trial of the Chicago 7,male,0,Nominee,0, 1/3,1,Fail,Moderate,2
+65,2020,263056619,Parasite,male,0,Winner,1,1,3,Pass,Severe,3
+66,2020,226299480,Ford v Ferrari,male,0,Nominee,0,0/3,0,Fail,Mild,1
+67,2020,968853,The Irishman,male,0,Nominee,0, 1/3,1,Fail,Severe,3
+68,2020,93598180,Jojo Rabbit,male,0,Nominee,0,1,3,Pass,Mild,1
+69,2020,1078958629,Joker,male,0,Nominee,0,1,3,Pass,Severe,3
+70,2020,220102679,Little Women,male,0,Nominee,0,1,3,Pass,None,0
+71,2020,333686,Marriage Story,male,0,Nominee,0, 2/3,2,Fail,Mild,1
+72,2020,446064352,"""1917""",male,0,Nominee,0,0/3,0,Fail,Severe,3
+73,2020,393869691,Once upon a Time...in Hollywood,male,0,Nominee,0,1,3,Pass,Severe,3
