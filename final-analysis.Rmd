@@ -320,7 +320,7 @@ In order to account for few cell counts for female director variable, and to tre
 
 ## H2 Data Visualisation
 
-### Bar Plot
+### Bar Plot (H2)
 
 This bar plot shows the breakdown of Bechdel Test criteria met by each film grouped according to gender of film director (Female, Non-female).
 
@@ -338,7 +338,7 @@ ggplot(film_data, aes(x = gen_dir, fill = factor(bechdel))) +
     fill = "Bechdel Test Score"
   )
 ```
-### Time Trend
+### Time Trend (H2)
 
 This time trend graph shows the proportion of films that meet all three criteria of the Bechdel Test by year, from 2020 to 2026, split by gender of film director. 
 
@@ -367,7 +367,7 @@ ggplot(yearly_trends, aes(x = year, y = Pass_Rate, color = director_binary)) +
 
 ```
 
-### Cumulative Density Plot
+### Cumulative Density Plot (H2)
 
 This cumulative density plot visualises the proportion of films over the six years across the Bechdel Test Scores, split by gender of film director.
 
@@ -386,7 +386,7 @@ ggplot(film_data, aes(x = bechdel, color = gen_dir)) +
 
 ```
 
-### Mosaic Plot 
+### Mosaic Plot (H2)
 
 This mosaic plot visualises distribution of Bechdel Test criteria met by the whole population-Oscars Academy Award Best Picture Shortlisted Films between 2020 and 2026-split by gender of film director and proportions of each number of Bechdel Test criteria met.
 
