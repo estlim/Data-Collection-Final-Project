@@ -280,6 +280,10 @@ ggplot(film_data, aes(x = bechdel)) +
 
 ```
 
+#### Chi-square Test (H2) Results
+
+A chi-square test was conducted to examine if there is a relationship between director gender and Bechdel Test score. As the number of female directors in the dataset were too few, the calculated chi-square value was inaccurate. Furthermore, this relationship was not statistically significant, chi-square = 4.8575, df = 3, p = .183.
+
 ### Independent Samples t-test (H2)
 
 ```{r t test H2}
@@ -293,6 +297,7 @@ print(h2tt_results)
 
 #### Independent Samples t-test (H2) Results
 
+A independent samples t-test was thus conducted to examine the difference between the mean average  score on the Bechdel Test between genders of directors. This assumes that the variable for the Bechdel Test is continuous. The result showed that there was no statistically significant difference between the Bechdel Test scores of female-directed movies and non-female-directed movies, t = 1.1415, df = 10.548, p = .279.
 
 ### Mann-Whitney U Test (H2)
 
@@ -308,21 +313,22 @@ print(h2mannwhit_results)
 
 ```
 
-## Findings 2
+#### Mann-Whitney U Test (H2) Results
 
-A chi-square test was conducted to examine if there is a relationship between director gender and Bechdel Test score. As the number of female directors in the dataset were too few, the calculated chi-square value was inaccurate. Furthermore, this relationship was not statistically significant, chi-square = 4.8575, df = 3, p = .183.
+In order to account for few cell counts for female director variable, and to treat the Bechdel Test score as ordinal, a Mann-Whitney U Test was conducted to determine if there was a significant difference in Bechdel Test scores between female-directed and non-female-directed Oscar-nominated films from 2000 to 2026. The median Bechdel Test score for female-directed films (Mdn = 3) was not significantly different from non-female-directed films (Mdn = 3), U = 329.5, p = 0.147.
 
-A independent samples t-test was thus conducted to examine the difference between the mean average  score on the Bechdel Test between genders of directors. This assumes that the variable for the Bechdel Test is continuous. The result showed that there was no statistically significant difference between the Bechdel Test scores of female-directed movies and non-female-directed movies, t = 1.1415, df = 10.548, p = .279.
+## H2 Data Visualisation
 
-Thus, in order to account for few cell counts for female director variable, and to treat the Bechdel Test score as ordinal, a Mann-Whitney U Test was conducted to determine if there was a significant difference in Bechdel Test scores between female-directed and non-female-directed Oscar-nominated films from 2000 to 2026. The median Bechdel Test score for female-directed films (Mdn = 3) was not significantly different from non-female-directed films (Mdn = 3), U = 329.5, p = 0.147.
+### Bar Plot
 
-```{r}
+This bar plot shows the breakdown of Bechdel Test criteria met by each film grouped according to gender of film director (Female, Non-female).
 
-# Shows the percentage breakdown of scores within each gender group, 
-ggplot(short_data, aes(x = gen_dir, fill = factor(bechdel))) +
+```{r bar plot H2}
+
+ggplot(film_data, aes(x = gen_dir, fill = factor(bechdel))) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_brewer(palette = "Blues") +
+  scale_fill_paletteer_d("PNWColors::Bay") +
   theme_minimal() +
   labs(
     title = "Proportion of Bechdel Test Scores by Director Gender",
@@ -330,10 +336,14 @@ ggplot(short_data, aes(x = gen_dir, fill = factor(bechdel))) +
     y = "Percentage of Films",
     fill = "Bechdel Test Score"
   )
+```
+### Time Trend
 
+This time trend graph shows the proportion of films that meet all three criteria of the Bechdel Test by year, from 2020 to 2026, split by gender of film director. 
 
-# Time trend plot
-yearly_trends <- short_data %>%
+```{r time trend H2}
+
+yearly_trends <- film_data %>%
   mutate(
     Passed = ifelse(bechdel == 3, 1, 0),
     director_binary = factor(ifelse(gen_dir == "female", "Female", "Non-Female"))
@@ -344,7 +354,7 @@ yearly_trends <- short_data %>%
 ggplot(yearly_trends, aes(x = year, y = Pass_Rate, color = director_binary)) +
   geom_line(size = 1.2) +
   geom_point(size = 3) +
-  scale_color_manual(values = c("Non-Female" = "steelblue", "Female" = "tomato")) +
+  scale_color_manual(values = c("Non-Female" = "#0F85A0FF", "Female" = "#DD4124FF")) +
   scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
   theme_minimal() +
   labs(
@@ -354,10 +364,17 @@ ggplot(yearly_trends, aes(x = year, y = Pass_Rate, color = director_binary)) +
     color = "Director Gender"
   )
 
-# (Look for which gender's line climbs to 1.0 the fastest/soonest)
-ggplot(short_data, aes(x = bechdel, color = gen_dir)) +
+```
+
+### Cumulative Density Plot
+
+This cumulative density plot visualises the proportion of films over the six years across the Bechdel Test Scores, split by gender of film director.
+
+```{r cumulative density H2}
+
+ggplot(film_data, aes(x = bechdel, color = gen_dir)) +
   stat_ecdf(geom = "step", size = 1.2) +
-  scale_color_manual(values = c("tomato", "steelblue")) +
+  scale_color_manual(values = c("#DD4124FF", "#0F85A0FF")) +
   theme_minimal() +
   labs(
     title = "Cumulative Density of Bechdel Test Scores by Gender",
@@ -366,9 +383,15 @@ ggplot(short_data, aes(x = bechdel, color = gen_dir)) +
     color = "Director Gender"
   )
 
-# Uses base R's mosaicplot to visualize the cross-tabulation
+```
 
-mosaic_table <- table(short_data$gen_dir, short_data$bechdel_coded)
+### Mosaic Plot 
+
+This mosaic plot visualises distribution of Bechdel Test criteria met by the whole population-Oscars Academy Award Best Picture Shortlisted Films between 2020 and 2026-split by gender of film director and proportions of each number of Bechdel Test criteria met.
+
+```{r mosaic plot}
+
+mosaic_table <- table(film_data$gen_dir, film_data$bechdel_coded)
 
 mosaicplot(
   mosaic_table, 
@@ -392,19 +415,29 @@ mosaicplot(
 
 ```
 
-```{r}
-short_data %>%
-  ggplot(aes(x = box_office, y = violence))+
-  geom_violin() +
-  scale_x_continuous(
-    name   = 'Box Office ($1M, $10M, $100M, $1B)',
-    breaks = c(6, 7, 8, 9),
-    labels = c("$1M", "$10M", "$100M", "$1B")
-  ) +
-  labs(y = 'Violence Rating')
-
-```
-
 ## Hypothesis 3 (H3)
 
 There is a relationship between a film’s worldwide box office revenue and the IMDb Violence and Gore rating among Oscar Best Picture shortlisted films (2020-2026).
+
+## H3 Analysis
+
+### Test Name (H3)
+
+```{r}
+
+# Test code here!
+
+```
+
+#### Test Name (H3) Results
+
+
+## Data Visualisation
+
+### Visualisation Name (H3)
+
+``` {r}
+
+# Plot code here!
+
+```
