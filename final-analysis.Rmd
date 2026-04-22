@@ -1,8 +1,11 @@
 ---
-title: "Analysis of Violence Ratings and Bechdel Test Scores for Oscars Nominated Films from 2020 to 2026"
+title: Analysis of Violence Ratings and Bechdel Test Scores for Oscars Nominated Films
+  from 2020 to 2026
 author: "Esther Lim, Ethan Sanders, Kamila Kwiatkowska"
 date: "2026-04-19"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 # Research Question
@@ -45,6 +48,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(readr)
 library(ggplot2)
+library(paletteer)
+
 options(scipen = 999)
 
 film_data <- read.csv("data/violence-bechdel-data.csv")
@@ -80,14 +85,19 @@ film_data <- film_data %>%
       )
   )
 
-chisq_tbl <- table(film_data$violence, film_data$bechdel)
-print(chisq_tbl)
+h1chisq_tbl <- table(film_data$violence, film_data$bechdel)
 
-chisq_test <- chisq.test(chisq_tbl)
+print("2x4 Contingency Table:")
+print(h1chisq_tbl)
+
+h1chisq_results <- chisq.test(chisq_tbl)
+
+print("H1 Chi-square Test Results:")
+print(h1chisq_results)
 
 ```
 
-#### Chi-square Test of Independence (H1) results
+#### Chi-square Test of Independence (H1) Results
 
 p-value = 0.097. Because of the sample size, a Fisher's Exact Test is recommended.
 
@@ -95,42 +105,45 @@ p-value = 0.097. Because of the sample size, a Fisher's Exact Test is recommende
 
 ```{r Fishers Exact Test H1}
 
-table(film_data$violence, film_data$bechdel)
+h1fsh_tbl <- table(film_data$violence, film_data$bechdel)
+print("4x4 Contingency Table:")
+print(h1fsh_tbl)
 
-test <- fisher.test(table(film_data$violence, film_data$bechdel))
-test
+h1fsh_results <- fisher.test(table(film_data$violence, film_data$bechdel))
+print("H1 Fisher's Exact Test Results:")
+print(h1fsh_results)
 
 ```
 
-#### Fisher's Exact Test (H1) results
+#### Fisher's Exact Test (H1) Results
 
 p-value = 0.087.
 
-### OLS Linear Model
+### OLS Linear Model (H1)
 
 ```{r OLS H1}
 
-ols <- lm(film_data$bechdel ~ film_data$violence, film_data = ols_data) 
-ols
-summary(ols)
+h1ols <- lm(film_data$bechdel ~ film_data$violence, film_data = ols_data) 
+
+summary(h1ols)
 
 ```
 
-#### OLS (H1) results
+#### OLS (H1) Results
 
 p-value = 0.123.
 
-## Data Visualisation (H1)
+## H1 Data Visualisation
 
 ### Scatterplot (H1)
 
-```{r}
+```{r Scatterplot H1}
 
 film_data %>%
   ggplot(
     aes(x = violence, y = bechdel)
   ) +
-  geom_point(color = "lightgreen") +
+  geom_point(color = "#00496FFF") +
   labs(title = "Scatterplot for Hypothesis 1",
        x = "IMDb Violence and Gore score",
        y = "Bechdel Test criteria passed")
@@ -139,13 +152,13 @@ film_data %>%
 
 ### Scatterplot with Jitter (H1)
 
-```{r}
+```{r Scatterplot Jitter H1}
 
 film_data %>%
   ggplot(
     aes(x = violence, y = bechdel)
   ) +
-  geom_jitter(color = "darkgreen") +
+  geom_jitter(color = "#ED8B00FF") +
   labs(title = "Scatterplot for Hypothesis 1",
        x = "IMDb Violence and Gore score",
        y = "Bechdel Test criteria passed")
@@ -160,8 +173,8 @@ film_data %>%
   ggplot(
     aes(x = violence_coded, y = bechdel)
   ) +
-  geom_jitter(color = "darkgreen") +
-geom_smooth(method = "lm", se = FALSE, col = "lightgreen") +
+  geom_jitter(color = "#ED8B00FF") +
+geom_smooth(method = "lm", se = FALSE, col = "#DD4124FF") +
   labs(title = "Scatterplot with Regression for Hypothesis 1",
        x = "IMDb Violence and Gore score",
        y = "Bechdel Test criteria passed")
@@ -172,8 +185,8 @@ geom_smooth(method = "lm", se = FALSE, col = "lightgreen") +
 
 ```{r Spearman Rho Test H1}
   
-corr <- cor.test(x = film_data$violence_coded, y = film_data$bechdel, method = "spearman")
-corr
+corr_results <- cor.test(x = film_data$violence_coded, y = film_data$bechdel, method = "spearman")
+print(corr_results)
 
 ```
 
@@ -189,118 +202,34 @@ film_data %>%
   ggplot(
     aes(x = violence, y = bechdel)
   ) +
-  geom_violin(color = "darkgreen", fill = "lightgreen")
+  geom_violin(color = "#ED8B00FF", fill = "#EDD746FF")
+
 ```
 
 ### Boxplot (H1)
 
-```{r}
+```{r Boxplot H1}
 
 film_data %>%
   ggplot(
     aes(x = violence, y = bechdel)
   ) +
-  geom_boxplot(fill = "lightgreen", color = "darkgreen")
+  geom_boxplot(color = "#ED8B00FF", fill = "#EDD746FF")
 
 ```
+---
 
 ## Hypothesis 2 (H2)
 
 There is a relationship between a film being female-directed and non-female-directed and its odds of passing all three Bechdel Test criteria among Oscar Best Picture shortlisted films (2020-2026).
 
-## Analysis (H2)
+## H2 Analysis
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(ggplot2)
-library(dplyr)
-library(readr)
-```
-
-# Survey
-
-This is a test analysis of a dataset on Oscars Nominated Films for Best Picture from 2000 to 2026. 
-
-# Hypotheses
-
-## Hypothesis 1
-H1 Levels of violence are inversely related to number of Bechdel Test criteria met.
-
-## Hypothesis 2
-H2 There is a significant difference in Bechdel Test scores between Oscar Best Picture winners and non-winning nominees.
-
-
-``` {r}
-oscars_data <- read.csv('../data/violence-femalerep-films-data.csv')
-
-oscars_data_sorted <- oscars_data %>% 
-  select(Year, Bechdel_Score, Violence_Score,Violence_Score_Ord) %>%
-    filter(!is.na(Bechdel_Score)) %>% 
-           mutate(Violence_Score = factor(Violence_Score,
-                                          levels = c("None","Mild","Moderate","Severe"),
-                                          ordered = TRUE)) %>% 
-  arrange(Violence_Score)
-
-```
-
-```{r}
-ggplot(oscars_data_sorted, aes(x = Violence_Score, y = Bechdel_Score)) +
-  geom_jitter(aes(color = Year), alpha = 0.8) + 
-  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "red") + 
-  labs(
-    title = "Best Picture Nominee Bechdel Test Scores",
-    x = "Violence Rating",
-    y = "Bechdel Test Score",
-    color = "Release Year"
-  ) +
-  theme_minimal()
-
-```
-```{r}
-correlation_test <- cor.test(oscars_data$Violence_Score_Ord, oscars_data$Bechdel_Score)
-```
-
-# Findings
-
-# Findings for Hypothesis 1
-
-Violence levels + Bechdel Test scores are not statistically significant, cor = -0.1063218, df = 65, p = .392.
-
-```{r}
-ggplot(oscars_data_sorted, aes(x = Year, y = Violence_Score)) +
-    geom_jitter(aes(color = Bechdel_Score), alpha = 0.6, width = 0.2, height = 0.2) +
-  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "red") +
-  scale_color_gradient(low = "lightblue", high = "darkblue") +
-  labs(
-    title = "Best Picture Nominees 2000-2026",
-    x = "Year",
-    y = "Violence Score",
-    color = "Bechdel Test Score"
-  ) +
-  theme_minimal()
-```
-
-# Survey
-
-This is a test analysis of a dataset on Oscars Nominated Films for Best Picture from 2000 to 2026. 
-
-# Hypothesis
-There is a significant relationship between a film being female-directed and non-female-directed and its odds of passing the Bechdel Test, meeting all 3 criteria, among Oscar Best Picture shortlisted films from 2020-2026.
-
-# Method 1
-Fisher's Exact Test to find odds ratio, and the p-value to assess if it is statistically significant.
+### Fisher's Exact Test (H2)
 
 ```{r}
 
-library(ggplot2)
-library(readr)
-library(dplyr)
-library(tidyverse)
-
-short_data <- read.csv('../data/violence-bechdel-data.csv')
-
-odds_test <- short_data %>%
+odds_test <- film_data %>%
   mutate(director_binary = factor(
       ifelse(gen_dir == "female", "Female", "Non-Female"),
       levels = c("Non-Female", "Female")
@@ -323,45 +252,59 @@ print(odds_results)
 
 ```
 
-## Findings 1
+#### Fisher's Exact Test (H2) Results
 
-A Fisher’s exact test was conducted to examine the relationship between director gender and passing the Bechdel test. While female-directed films had over five times higher odds of passing the test compared to non-female-directed films, this difference was not statistically significant, OR = 5.53, with a 95% confidence interval [0.67, 260.50], p = .138. p > .1?
+A Fisher’s exact test was conducted to examine the relationship between director gender and passing the Bechdel test. While female-directed films had over five times higher odds of passing the test compared to non-female-directed films, this difference was not statistically significant, OR = 5.53, with a 95% confidence interval [0.67, 260.50], p = .138.
 
-# Method 2
-Chi-square test to check for relationships between director gender and bechdel test score (0 to 3), and assess if the result is statistically significant.
+### Chi-square Test (H2)
 
-```{r}
+```{r chisquare H2}
 
-contingency_table <- table(short_data$gen_dir, short_data$bechdel)
+h2chisq_tbl <- table(film_data$gen_dir, film_data$bechdel)
 print("Observed Frequencies:")
-print(contingency_table)
+print(h2chisq_tbl)
 
-chi_results <- chisq.test(contingency_table)
+h2chisq_results <- chisq.test(h2chisq_tbl)
 
 print("Expected Frequencies (Must mostly be >= 5):")
-print(chi_results$expected)
+print(h2chisq_results$expected)
 
 print("Chi-Square Test Results:")
-print(chi_results)
+print(h2chisq_results)
 
-ggplot(short_data, aes(x = bechdel)) +
-  geom_histogram(binwidth = 1, fill = "steelblue", color = "white") +
+ggplot(film_data, aes(x = bechdel)) +
+  geom_histogram(binwidth = 1, fill = "#0F85A0FF", color = "#89AAC6FF") +
   facet_wrap(~ gen_dir) +
   theme_minimal() +
   labs(title = "Distribution of Bechdel Scores by Director Gender (Normality Check)")
 
-t_test_results <- t.test(bechdel ~ gen_dir, data = short_data)
+```
+
+### Independent Samples t-test (H2)
+
+```{r t test H2}
+
+h2tt_results <- t.test(bechdel ~ gen_dir, data = film_data)
 
 print("Independent Samples t-test Results:")
-print(t_test_results)
+print(h2tt_results)
 
-short_data %>%
+```
+
+#### Independent Samples t-test (H2) Results
+
+
+### Mann-Whitney U Test (H2)
+
+```{r Mann-Whitney U Test H2}
+
+film_data %>%
   group_by(gen_dir) %>%
   summarize(median_bechdel = median(bechdel, na.rm = TRUE))
 
-mann_whitney_results <- wilcox.test(bechdel ~ gen_dir, data = short_data)
-print("Mann-Whitney U Test Results (Non-parametric alternative):")
-print(mann_whitney_results)
+h2mannwhit_results <- wilcox.test(bechdel ~ gen_dir, data = film_data)
+print("Mann-Whitney U Test Results:")
+print(h2mannwhit_results)
 
 ```
 
