@@ -8,13 +8,190 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+library(dplyr)
 library(readr)
+library(ggplot2)
+options(scipen = 999)
 
 film_data <- read.csv("data/violence-bechdel-data.csv")
-
+  skip_empty_rows = TRUE
+  stringsAsFactors = TRUE
+  
 ```
 
 # Final Project Analysis
 
 R Project and Markdown document set up
 
+# Research Question
+
+### Among the Oscar Academy Award Best Picture shortlisted films from 2020 to 2026, is there a significant relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets?
+
+# Hypotheses
+
+### Hypothesis 1 (H1)
+
+There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+
+### Hypothesis 2 (H2)
+
+There is a relationship between a film being female-directed and non-female-directed and its odds of passing all three Bechdel Test criteria among Oscar Best Picture shortlisted films (2020-2026).
+
+### Hypothesis 3 (H3)
+
+There is a relationship between a film’s worldwide box office revenue and the IMDb Violence and Gore rating among Oscar Best Picture shortlisted films (2020-2026).
+
+# Findings
+
+## Hypothesis 1 (H1)
+
+There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+
+### Chi-square Test of Independence (H1)
+
+```{r Chi-square Test H1}
+
+violence_levels <- c(
+  'None',
+  'Mild',
+  'Moderate',
+  'Severe'
+)
+
+film_data <- film_data %>%
+  mutate(
+    violence = violence %>%
+      ordered(
+        levels = violence_levels
+      )
+  )
+
+table(film_data$violence, film_data$bechdel)
+
+test <- chisq.test(table(film_data$violence, film_data$bechdel))
+test
+
+```
+
+#### Chi-square Test of Independence (H1) results
+
+p-value = 0.097. Because of the sample size, a Fisher's Exact Test is recommended.
+
+### Fisher's Exact Test (H1)
+
+```{r Fishers Exact Test H1}
+
+table(film_data$violence, film_data$bechdel)
+
+test <- fisher.test(table(film_data$violence, film_data$bechdel))
+test
+
+```
+
+#### Fisher's Exact Test (H1) results
+
+p-value = 0.087.
+
+### OLS Linear Model
+
+```{r OLS H1}
+
+ols <- lm(film_data$bechdel ~ film_data$violence, film_data = ols_data) 
+ols
+summary(ols)
+
+```
+
+#### OLS (H1) results
+
+p-value = 0.123.
+
+### Scatterplot (H1)
+
+```{r}
+
+film_data %>%
+  ggplot(
+    aes(x = violence, y = bechdel)
+  ) +
+  geom_point(color = "lightgreen") +
+  labs(title = "Scatterplot for Hypothesis 1",
+       x = "IMDb Violence and Gore score",
+       y = "Bechdel Test criteria passed")
+
+```
+
+### Scatterplot with Jitter (H1)
+
+```{r}
+
+film_data %>%
+  ggplot(
+    aes(x = violence, y = bechdel)
+  ) +
+  geom_jitter(color = "darkgreen") +
+  labs(title = "Scatterplot for Hypothesis 1",
+       x = "IMDb Violence and Gore score",
+       y = "Bechdel Test criteria passed")
+
+```
+
+### Scatterplot with Regression (H1)
+
+```{r Scatterplot H1 w Regression}
+
+film_data %>%
+  ggplot(
+    aes(x = violence_coded, y = bechdel)
+  ) +
+  geom_jitter(color = "darkgreen") +
+geom_smooth(method = "lm", se = FALSE, col = "lightgreen") +
+  labs(title = "Scatterplot with Regression for Hypothesis 1",
+       x = "IMDb Violence and Gore score",
+       y = "Bechdel Test criteria passed")
+
+```
+
+### Spearman Rho Test (H1)
+
+```{r Spearman Rho Test H1}
+  
+corr <- cor.test(x = film_data$violence_coded, y = film_data$bechdel, method = "spearman")
+corr
+
+```
+
+#### Spearman Rho Test Results (H1)
+
+p-value = 0.548
+
+### Violin (H1)
+
+```{r Violin H1}
+  
+film_data %>%
+  ggplot(
+    aes(x = violence, y = bechdel)
+  ) +
+  geom_violin(color = "darkgreen", fill = "lightgreen")
+```
+
+### Boxplot (H1)
+
+```{r}
+
+film_data %>%
+  ggplot(
+    aes(x = violence, y = bechdel)
+  ) +
+  geom_boxplot(fill = "lightgreen", color = "darkgreen")
+
+```
+
+## Hypothesis 2 (H2)
+
+There is a relationship between a film being female-directed and non-female-directed and its odds of passing all three Bechdel Test criteria among Oscar Best Picture shortlisted films (2020-2026).
+
+## Hypothesis 3 (H3)
+
+There is a relationship between a film’s worldwide box office revenue and the IMDb Violence and Gore rating among Oscar Best Picture shortlisted films (2020-2026).
