@@ -6,6 +6,7 @@ date: "2026-04-19"
 output:
   word_document: default
   html_document: default
+  pdf_document: default
 ---
 
 # Research Question
@@ -90,7 +91,7 @@ h1chisq_tbl <- table(film_data$violence, film_data$bechdel)
 print("2x4 Contingency Table:")
 print(h1chisq_tbl)
 
-h1chisq_results <- chisq.test(chisq_tbl)
+h1chisq_results <- chisq.test(h1chisq_tbl)
 
 print("H1 Chi-square Test Results:")
 print(h1chisq_results)
@@ -396,21 +397,21 @@ mosaic_table <- table(film_data$gen_dir, film_data$bechdel_coded)
 mosaicplot(
   mosaic_table, 
   main = "Mosaic Plot of Director Gender vs. Bechdel Test Fail/Pass",
-  color = c("lightgray", "steelblue"),
+  color = c("#ED8B00FF", "#0F85A0FF"),
   xlab = "Director Gender", 
   ylab = "Bechdel Status (Fail / Pass)",
-  border = "white"
+  border = "#00496FFF"
 )
 
-mosaic_table_more <- table(short_data$gen_dir, short_data$bechdel)
+mosaic_table_more <- table(film_data$gen_dir, film_data$bechdel)
 
 mosaicplot(
   mosaic_table_more, 
-  main = "Mosaic Plot of Director Gender vs. Bechdel Test Fail/Pass",
-  color = c("lightgray", "steelblue"),
+  main = "Mosaic Plot of Director Gender vs. Bechdel Test Score",
+  color = c("#ED8B00FF", "#89AAC6FF"),
   xlab = "Director Gender", 
-  ylab = "Bechdel Status (Fail / Pass)",
-  border = "white"
+  ylab = "Bechdel Test Score",
+  border = "#00496FFF"
 )
 
 ```
