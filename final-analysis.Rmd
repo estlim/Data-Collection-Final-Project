@@ -1,27 +1,9 @@
 ---
-title: "Violence and Female Representation in Movies"
+title: "Analysis of Violence Ratings and Bechdel Test Scores for Oscars Nominated Films from 2020 to 2026"
 author: "Esther Lim, Ethan Sanders, Kamila Kwiatkowska"
 date: "2026-04-19"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(dplyr)
-library(readr)
-library(ggplot2)
-options(scipen = 999)
-
-film_data <- read.csv("data/violence-bechdel-data.csv")
-  skip_empty_rows = TRUE
-  stringsAsFactors = TRUE
-  
-```
-
-# Final Project Analysis
-
-R Project and Markdown document set up
 
 # Research Question
 
@@ -41,11 +23,43 @@ There is a relationship between a film being female-directed and non-female-dire
 
 There is a relationship between a film’s worldwide box office revenue and the IMDb Violence and Gore rating among Oscar Best Picture shortlisted films (2020-2026).
 
-# Findings
+# Summarised Findings
 
-## Hypothesis 1 (H1)
+### Hypothesis 1 (H1)
 
 There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+
+### Hypothesis 2 (H2)
+
+There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+
+### Hypothesis 3 (H3)
+
+There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(readr)
+library(ggplot2)
+options(scipen = 999)
+
+film_data <- read.csv("data/violence-bechdel-data.csv")
+  skip_empty_rows = TRUE
+  stringsAsFactors = TRUE
+  
+# Hypothesis 1 Data Setup
+  
+# Hypothesis 2 Data Setup
+
+# Hypothesis 3 Data Setup
+  
+```
+
+## H1 Analysis
 
 ### Chi-square Test of Independence (H1)
 
@@ -66,10 +80,10 @@ film_data <- film_data %>%
       )
   )
 
-table(film_data$violence, film_data$bechdel)
+chisq_tbl <- table(film_data$violence, film_data$bechdel)
+print(chisq_tbl)
 
-test <- chisq.test(table(film_data$violence, film_data$bechdel))
-test
+chisq_test <- chisq.test(chisq_tbl)
 
 ```
 
@@ -105,6 +119,8 @@ summary(ols)
 #### OLS (H1) results
 
 p-value = 0.123.
+
+## Data Visualisation (H1)
 
 ### Scatterplot (H1)
 
@@ -191,6 +207,260 @@ film_data %>%
 ## Hypothesis 2 (H2)
 
 There is a relationship between a film being female-directed and non-female-directed and its odds of passing all three Bechdel Test criteria among Oscar Best Picture shortlisted films (2020-2026).
+
+## Analysis (H2)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(dplyr)
+library(readr)
+```
+
+# Survey
+
+This is a test analysis of a dataset on Oscars Nominated Films for Best Picture from 2000 to 2026. 
+
+# Hypotheses
+
+## Hypothesis 1
+H1 Levels of violence are inversely related to number of Bechdel Test criteria met.
+
+## Hypothesis 2
+H2 There is a significant difference in Bechdel Test scores between Oscar Best Picture winners and non-winning nominees.
+
+
+``` {r}
+oscars_data <- read.csv('../data/violence-femalerep-films-data.csv')
+
+oscars_data_sorted <- oscars_data %>% 
+  select(Year, Bechdel_Score, Violence_Score,Violence_Score_Ord) %>%
+    filter(!is.na(Bechdel_Score)) %>% 
+           mutate(Violence_Score = factor(Violence_Score,
+                                          levels = c("None","Mild","Moderate","Severe"),
+                                          ordered = TRUE)) %>% 
+  arrange(Violence_Score)
+
+```
+
+```{r}
+ggplot(oscars_data_sorted, aes(x = Violence_Score, y = Bechdel_Score)) +
+  geom_jitter(aes(color = Year), alpha = 0.8) + 
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "red") + 
+  labs(
+    title = "Best Picture Nominee Bechdel Test Scores",
+    x = "Violence Rating",
+    y = "Bechdel Test Score",
+    color = "Release Year"
+  ) +
+  theme_minimal()
+
+```
+```{r}
+correlation_test <- cor.test(oscars_data$Violence_Score_Ord, oscars_data$Bechdel_Score)
+```
+
+# Findings
+
+# Findings for Hypothesis 1
+
+Violence levels + Bechdel Test scores are not statistically significant, cor = -0.1063218, df = 65, p = .392.
+
+```{r}
+ggplot(oscars_data_sorted, aes(x = Year, y = Violence_Score)) +
+    geom_jitter(aes(color = Bechdel_Score), alpha = 0.6, width = 0.2, height = 0.2) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, color = "red") +
+  scale_color_gradient(low = "lightblue", high = "darkblue") +
+  labs(
+    title = "Best Picture Nominees 2000-2026",
+    x = "Year",
+    y = "Violence Score",
+    color = "Bechdel Test Score"
+  ) +
+  theme_minimal()
+```
+
+# Survey
+
+This is a test analysis of a dataset on Oscars Nominated Films for Best Picture from 2000 to 2026. 
+
+# Hypothesis
+There is a significant relationship between a film being female-directed and non-female-directed and its odds of passing the Bechdel Test, meeting all 3 criteria, among Oscar Best Picture shortlisted films from 2020-2026.
+
+# Method 1
+Fisher's Exact Test to find odds ratio, and the p-value to assess if it is statistically significant.
+
+```{r}
+
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyverse)
+
+short_data <- read.csv('../data/violence-bechdel-data.csv')
+
+odds_test <- short_data %>%
+  mutate(director_binary = factor(
+      ifelse(gen_dir == "female", "Female", "Non-Female"),
+      levels = c("Non-Female", "Female")
+      ),
+    bechdel_binary = factor(
+      ifelse(bechdel == 3, "Pass", "Fail"),
+      levels = c("Fail", "Pass")
+    )
+  )
+
+odds_table <- table(odds_test$director_binary, odds_test$bechdel_binary)
+
+print("2x2 Contingency Table:")
+print(odds_table)
+
+odds_results <- fisher.test(odds_table)
+
+print("Odds Ratio Test Results:")
+print(odds_results)
+
+```
+
+## Findings 1
+
+A Fisher’s exact test was conducted to examine the relationship between director gender and passing the Bechdel test. While female-directed films had over five times higher odds of passing the test compared to non-female-directed films, this difference was not statistically significant, OR = 5.53, with a 95% confidence interval [0.67, 260.50], p = .138. p > .1?
+
+# Method 2
+Chi-square test to check for relationships between director gender and bechdel test score (0 to 3), and assess if the result is statistically significant.
+
+```{r}
+
+contingency_table <- table(short_data$gen_dir, short_data$bechdel)
+print("Observed Frequencies:")
+print(contingency_table)
+
+chi_results <- chisq.test(contingency_table)
+
+print("Expected Frequencies (Must mostly be >= 5):")
+print(chi_results$expected)
+
+print("Chi-Square Test Results:")
+print(chi_results)
+
+ggplot(short_data, aes(x = bechdel)) +
+  geom_histogram(binwidth = 1, fill = "steelblue", color = "white") +
+  facet_wrap(~ gen_dir) +
+  theme_minimal() +
+  labs(title = "Distribution of Bechdel Scores by Director Gender (Normality Check)")
+
+t_test_results <- t.test(bechdel ~ gen_dir, data = short_data)
+
+print("Independent Samples t-test Results:")
+print(t_test_results)
+
+short_data %>%
+  group_by(gen_dir) %>%
+  summarize(median_bechdel = median(bechdel, na.rm = TRUE))
+
+mann_whitney_results <- wilcox.test(bechdel ~ gen_dir, data = short_data)
+print("Mann-Whitney U Test Results (Non-parametric alternative):")
+print(mann_whitney_results)
+
+```
+
+## Findings 2
+
+A chi-square test was conducted to examine if there is a relationship between director gender and Bechdel Test score. As the number of female directors in the dataset were too few, the calculated chi-square value was inaccurate. Furthermore, this relationship was not statistically significant, chi-square = 4.8575, df = 3, p = .183.
+
+A independent samples t-test was thus conducted to examine the difference between the mean average  score on the Bechdel Test between genders of directors. This assumes that the variable for the Bechdel Test is continuous. The result showed that there was no statistically significant difference between the Bechdel Test scores of female-directed movies and non-female-directed movies, t = 1.1415, df = 10.548, p = .279.
+
+Thus, in order to account for few cell counts for female director variable, and to treat the Bechdel Test score as ordinal, a Mann-Whitney U Test was conducted to determine if there was a significant difference in Bechdel Test scores between female-directed and non-female-directed Oscar-nominated films from 2000 to 2026. The median Bechdel Test score for female-directed films (Mdn = 3) was not significantly different from non-female-directed films (Mdn = 3), U = 329.5, p = 0.147.
+
+```{r}
+
+# Shows the percentage breakdown of scores within each gender group, 
+ggplot(short_data, aes(x = gen_dir, fill = factor(bechdel))) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_brewer(palette = "Blues") +
+  theme_minimal() +
+  labs(
+    title = "Proportion of Bechdel Test Scores by Director Gender",
+    x = "Director Gender",
+    y = "Percentage of Films",
+    fill = "Bechdel Test Score"
+  )
+
+
+# Time trend plot
+yearly_trends <- short_data %>%
+  mutate(
+    Passed = ifelse(bechdel == 3, 1, 0),
+    director_binary = factor(ifelse(gen_dir == "female", "Female", "Non-Female"))
+  ) %>%
+  group_by(year, director_binary) %>%
+  summarize(Pass_Rate = mean(Passed, na.rm = TRUE), .groups = "drop")
+
+ggplot(yearly_trends, aes(x = year, y = Pass_Rate, color = director_binary)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("Non-Female" = "steelblue", "Female" = "tomato")) +
+  scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
+  theme_minimal() +
+  labs(
+    title = "Bechdel Test Pass Rates Over Time (2020-2026)",
+    x = "Year of Release",
+    y = "Percentage of Films Passing (Score = 3)",
+    color = "Director Gender"
+  )
+
+# (Look for which gender's line climbs to 1.0 the fastest/soonest)
+ggplot(short_data, aes(x = bechdel, color = gen_dir)) +
+  stat_ecdf(geom = "step", size = 1.2) +
+  scale_color_manual(values = c("tomato", "steelblue")) +
+  theme_minimal() +
+  labs(
+    title = "Cumulative Density of Bechdel Test Scores by Gender",
+    x = "Bechdel Test Score (0 to 3)",
+    y = "Cumulative Proportion",
+    color = "Director Gender"
+  )
+
+# Uses base R's mosaicplot to visualize the cross-tabulation
+
+mosaic_table <- table(short_data$gen_dir, short_data$bechdel_coded)
+
+mosaicplot(
+  mosaic_table, 
+  main = "Mosaic Plot of Director Gender vs. Bechdel Test Fail/Pass",
+  color = c("lightgray", "steelblue"),
+  xlab = "Director Gender", 
+  ylab = "Bechdel Status (Fail / Pass)",
+  border = "white"
+)
+
+mosaic_table_more <- table(short_data$gen_dir, short_data$bechdel)
+
+mosaicplot(
+  mosaic_table_more, 
+  main = "Mosaic Plot of Director Gender vs. Bechdel Test Fail/Pass",
+  color = c("lightgray", "steelblue"),
+  xlab = "Director Gender", 
+  ylab = "Bechdel Status (Fail / Pass)",
+  border = "white"
+)
+
+```
+
+```{r}
+short_data %>%
+  ggplot(aes(x = box_office, y = violence))+
+  geom_violin() +
+  scale_x_continuous(
+    name   = 'Box Office ($1M, $10M, $100M, $1B)',
+    breaks = c(6, 7, 8, 9),
+    labels = c("$1M", "$10M", "$100M", "$1B")
+  ) +
+  labs(y = 'Violence Rating')
+
+```
 
 ## Hypothesis 3 (H3)
 
