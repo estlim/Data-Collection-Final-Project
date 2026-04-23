@@ -31,15 +31,15 @@ There is a relationship between a film’s worldwide box office revenue and the 
 
 ### Hypothesis 1 (H1)
 
-There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+No statistically significant relationship detected between violence rating and Bechdel score. Notable: cubic contrast in OLS was significant (p = .041), suggesting possible non-linear pattern worth investigating.
 
 ### Hypothesis 2 (H2)
 
-There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+Female-directed films showed 5.5× higher odds of passing the Bechdel test, but the result was non-significant, almost certainly due to very small female-director cell count (n = 9).
 
 ### Hypothesis 3 (H3)
 
-There is a statistically detectable relationship between a film’s IMDb Violence and Gore rating and the number of Bechdel Test criteria it meets among Oscar Best Picture shortlisted films (2020-2026).
+Revenue distributions were broadly similar across all four violence rating groups. Descriptively, "Severe" films had the highest median revenue ($117M), but this difference was not significant.
 
 ---
 
@@ -59,12 +59,6 @@ film_data <- read.csv("data/violence-bechdel-data.csv")
   skip_empty_rows = TRUE
   stringsAsFactors = TRUE
   
-# Hypothesis 1 Data Setup
-  
-# Hypothesis 2 Data Setup
-
-# Hypothesis 3 Data Setup
-  
 ```
 
 ## H1 Analysis
@@ -73,19 +67,12 @@ film_data <- read.csv("data/violence-bechdel-data.csv")
 
 ```{r Chi-square Test H1}
 
-violence_levels <- c(
-  'None',
-  'Mild',
-  'Moderate',
-  'Severe'
-)
+violence_levels <- c('None', 'Mild', 'Moderate', 'Severe')
 
 film_data <- film_data %>%
   mutate(
     violence = violence %>%
-      ordered(
-        levels = violence_levels
-      )
+      ordered(levels = violence_levels)
   )
 
 h1chisq_tbl <- table(film_data$violence, film_data$bechdel)
@@ -102,7 +89,7 @@ print(h1chisq_results)
 
 #### Chi-square Test of Independence (H1) Results
 
-p-value = .097. Because of the sample size, a Fisher's Exact Test is recommended.
+A chi-square test of independence was conducted to examine the relationship between IMDb Violence and Gore rating (None, Mild, Moderate, Severe) and the number of Bechdel Test criteria met (0–3) among Oscar Best Picture shortlisted films from 2020 to 2026. As several expected cell counts fell below 5, the result should be interpreted with caution, as the chi-square approximation may be unreliable. The result was not statistically significant, X2 (df = 9, n = 67) = 14.79, p = .097. A Fisher's exact test is therefore recommended as a more appropriate alternative given the sample size.
 
 ### Fisher's Exact Test (H1)
 
@@ -120,7 +107,7 @@ print(h1fsh_results)
 
 #### Fisher's Exact Test (H1) Results
 
-p-value = .087.
+A Fisher's exact test was conducted to examine the association between IMDb Violence and Gore rating and Bechdel Test score, as the small sample size rendered the chi-square approximation unreliable. The test was not statistically significant, p = .087. The null hypothesis is therefore retained, as the data provide no evidence of an association between a film's violence rating and its Bechdel Test score among Oscar Best Picture shortlisted films (2020–2026).
 
 ### OLS Linear Model (H1)
 
@@ -134,55 +121,7 @@ summary(h1ols)
 
 #### OLS (H1) Results
 
-p-value = .123.
-
-## H1 Data Visualisation
-
-### Scatterplot (H1)
-
-```{r Scatterplot H1}
-
-film_data %>%
-  ggplot(
-    aes(x = violence, y = bechdel)
-  ) +
-  geom_point(color = "#00496FFF") +
-  labs(title = "Scatterplot for Hypothesis 1",
-       x = "IMDb Violence and Gore score",
-       y = "Bechdel Test criteria passed")
-
-```
-
-### Scatterplot with Jitter (H1)
-
-```{r Scatterplot Jitter H1}
-
-film_data %>%
-  ggplot(
-    aes(x = violence, y = bechdel)
-  ) +
-  geom_jitter(color = "#ED8B00FF") +
-  labs(title = "Scatterplot for Hypothesis 1",
-       x = "IMDb Violence and Gore score",
-       y = "Bechdel Test criteria passed")
-
-```
-
-### Scatterplot with Regression (H1)
-
-```{r Scatterplot H1 w Regression}
-
-film_data %>%
-  ggplot(
-    aes(x = violence_coded, y = bechdel)
-  ) +
-  geom_jitter(color = "#ED8B00FF") +
-geom_smooth(method = "lm", se = FALSE, col = "#00496FFF") +
-  labs(title = "Scatterplot with Regression for Hypothesis 1",
-       x = "IMDb Violence and Gore score",
-       y = "Bechdel Test criteria passed")
-
-```
+An ordinary least squares regression was conducted to examine whether IMDb Violence and Gore rating predicted the number of Bechdel Test criteria met. The overall model was not statistically significant, F(3, 63) = 2.00, p = .123, R2 = .087, adjusted R2 = .044. The null hypothesis is therefore retained. However, it is worth noting that the cubic polynomial contrast was statistically significant, b = −0.459, SE = 0.220, t(63) = −2.08, p = .041, which may suggest a non-linear component to the relationship that warrants further investigation with a larger sample.
 
 ### Spearman Rho Test (H1)
 
@@ -195,17 +134,76 @@ print(corr_results)
 
 #### Spearman Rho Test Results (H1)
 
-p-value = .548
+A Spearman's rank correlation was conducted to examine the monotonic relationship between IMDb Violence and Gore rating and the number of Bechdel Test criteria met. The warning regarding ties is expected when an ordinal variable with few levels is used and does not invalidate the result. The correlation was negligible and not statistically significant, rs(65) = −.075, S = 53861, p = .548. The null hypothesis is therefore retained, as the data provide no evidence of a monotonic relationship between a film's violence rating and its Bechdel Test score among Oscar Best Picture shortlisted films (2020–2026).
+
+
+## H1 Data Visualisation
+
+### Scatterplot (H1)
+
+```{r Scatterplot H1}
+
+film_data %>%
+  ggplot(aes(x = violence, y = bechdel)) +
+  geom_point(color = "#ED8B00FF") +
+  
+  labs(
+    title = "Bechdel Scores by Violence Rating",
+    x = "Violence and Gore Score",
+    y = "Bechdel Test Score")
+
+```
+
+### Scatterplot with Jitter (H1)
+
+```{r Scatterplot Jitter H1}
+
+film_data %>%
+  ggplot(aes(x = violence, y = bechdel)) +
+  geom_jitter(width = 0.25, color = "#ED8B00FF") +
+  labs(
+    title = "Bechdel Scores by Violence Rating",
+    x = "Violence and Gore Score",
+    y = "Bechdel Test Score")
+
+```
+
+### Scatterplot with Regression (H1)
+
+```{r Scatterplot H1 w Regression}
+
+film_data %>%
+  ggplot(aes(x = violence_coded, y = bechdel)) +
+  geom_jitter(width = 0.25, color = "#ED8B00FF") +
+  geom_smooth(
+    aes(group = 1), 
+    method = "lm", 
+    se = FALSE, 
+    col = "#00496FFF"
+    ) +
+  
+  labs(
+    title = "Bechdel Scores by Violence Rating",
+    x = "Violence and Gore Score",
+    y = "Bechdel Test Score")
+
+```
+
+
 
 ### Violin (H1)
 
 ```{r Violin H1}
   
 film_data %>%
-  ggplot(
-    aes(x = violence, y = bechdel)
-  ) +
-  geom_violin(color = "#ED8B00FF", fill = "#EDD746FF")
+  ggplot(aes(x = violence, y = bechdel)) +
+  geom_violin(color = "#ED8B00FF", fill = "#EDD746FF")+
+  
+  labs(
+    title = "Distribution of Bechdel Scores by Violence Rating",
+    x = "Violence and Gore Rating",
+    y = "Bechdel Test Score"
+  )
 
 ```
 
@@ -214,10 +212,14 @@ film_data %>%
 ```{r Boxplot H1}
 
 film_data %>%
-  ggplot(
-    aes(x = violence, y = bechdel)
-  ) +
+  ggplot(aes(x = violence, y = bechdel)) +
   geom_boxplot(color = "#ED8B00FF", fill = "#EDD746FF")
+
+labs(
+    title = "Distribution of Bechdel Scores by Violence Rating",
+    x = "Violence and Gore Rating",
+    y = "Bechdel Test Score"
+)
 
 ```
 ---
@@ -279,7 +281,11 @@ ggplot(film_data, aes(x = bechdel)) +
   geom_histogram(binwidth = 1, fill = "#0F85A0FF", color = "#89AAC6FF") +
   facet_wrap(~ gen_dir) +
   theme_minimal() +
-  labs(title = "Distribution of Bechdel Scores by Director Gender (Normality Check)")
+  labs(
+    title = "Distribution of Bechdel Scores by Director's Gender \n (Normality Check)",
+    x = "Bechdel Test Score",
+    y = "Count"
+    )
 
 ```
 
@@ -335,7 +341,7 @@ ggplot(film_data, aes(x = gen_dir, fill = factor(bechdel))) +
   theme_minimal() +
   labs(
     title = "Proportion of Bechdel Test Scores by Director Gender",
-    x = "Director Gender",
+    x = "Director's Gender",
     y = "Percentage of Films",
     fill = "Bechdel Test Score"
   )
@@ -398,7 +404,7 @@ mosaic_table <- table(film_data$gen_dir, film_data$bechdel_coded)
 
 mosaicplot(
   mosaic_table, 
-  main = "Mosaic Plot of Director Gender vs. Bechdel Test Fail/Pass",
+  main = "Mosaic Plot of Director Gender \nvs. Bechdel Test Fail/Pass",
   color = c("#ED8B00FF", "#0F85A0FF"),
   xlab = "Director Gender", 
   ylab = "Bechdel Status (Fail / Pass)",
@@ -409,9 +415,9 @@ mosaic_table_more <- table(film_data$gen_dir, film_data$bechdel)
 
 mosaicplot(
   mosaic_table_more, 
-  main = "Mosaic Plot of Director Gender vs. Bechdel Test Score",
+  main = "Mosaic Plot of Director's Gender \nvs. Bechdel Test Score",
   color = c("#ED8B00FF", "#89AAC6FF"),
-  xlab = "Director Gender", 
+  xlab = "Director's Gender", 
   ylab = "Bechdel Test Score",
   border = "#00496FFF"
 )
@@ -535,7 +541,7 @@ film_data %>%
   ) +
     
     labs(
-    x     = 'Violence Rating',
+    x     = 'Violence and Gore Rating',
     title = 'Worldwide Box Office Revenue by Violence Rating'
   )
 ```
@@ -555,7 +561,7 @@ film_data %>%
   ) +
     
   labs(
-    x     = 'Violence Rating',
+    x     = 'Violence and Gore Rating',
     title = 'Distribution of Box Office Revenue by Violence Rating'
   )
 
@@ -576,7 +582,7 @@ film_data %>%
   ) +
     
   labs(
-    x = 'Violence Rating',
+    x = 'Violence and Gore Rating',
     title = 'Worldwide Box Office Revenue by Violence Rating'
   )
 
