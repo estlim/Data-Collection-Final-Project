@@ -50,6 +50,8 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 library(paletteer)
+library(scales)
+library(dunn.test)
 
 options(scipen = 999)
 
@@ -100,7 +102,7 @@ print(h1chisq_results)
 
 #### Chi-square Test of Independence (H1) Results
 
-p-value = 0.097. Because of the sample size, a Fisher's Exact Test is recommended.
+p-value = .097. Because of the sample size, a Fisher's Exact Test is recommended.
 
 ### Fisher's Exact Test (H1)
 
@@ -118,7 +120,7 @@ print(h1fsh_results)
 
 #### Fisher's Exact Test (H1) Results
 
-p-value = 0.087.
+p-value = .087.
 
 ### OLS Linear Model (H1)
 
@@ -132,7 +134,7 @@ summary(h1ols)
 
 #### OLS (H1) Results
 
-p-value = 0.123.
+p-value = .123.
 
 ## H1 Data Visualisation
 
@@ -175,7 +177,7 @@ film_data %>%
     aes(x = violence_coded, y = bechdel)
   ) +
   geom_jitter(color = "#ED8B00FF") +
-geom_smooth(method = "lm", se = FALSE, col = "#DD4124FF") +
+geom_smooth(method = "lm", se = FALSE, col = "#00496FFF") +
   labs(title = "Scatterplot with Regression for Hypothesis 1",
        x = "IMDb Violence and Gore score",
        y = "Bechdel Test criteria passed")
@@ -193,7 +195,7 @@ print(corr_results)
 
 #### Spearman Rho Test Results (H1)
 
-p-value = 0.548
+p-value = .548
 
 ### Violin (H1)
 
@@ -422,23 +424,160 @@ There is a relationship between a film’s worldwide box office revenue and the 
 
 ## H3 Analysis
 
-### Test Name (H3)
+##Descriptive Statistics
+```{r data preparation}
+violence_levels <- c('None','Mild','Moderate','Severe')
 
-```{r}
+film_data <- film_data %>%
+  mutate(
+    box_office = box_office %>%
+      as.numeric(),
 
-# Test code here!
+    log_box_office = log10(box_office),
+
+    violence = factor(
+      violence, 
+      levels = violence_levels, 
+      ordered = TRUE
+      ),
+
+    violence_coded = as.numeric(factor(
+      violence, 
+      levels = violence_levels, 
+      ordered = TRUE))
+
+) %>%
+
+  filter(!is.na(box_office))
+  
+```
+
+```{r descriptive statistics}
+film_data %>%
+  group_by(violence) %>%
+  summarize(
+    n = n(),
+    Mdn = median(box_office, na.rm = TRUE),
+    M = mean(box_office, na.rm = TRUE),
+    SD = sd(box_office, na.rm = TRUE),
+    Mdn_log = median(log_box_office, na.rm = TRUE),
+    M_log = mean(log_box_office, na.rm = TRUE)
+  )%>%
+  
+  mutate(
+    Mdn = scales::dollar(Mdn, accuracy = 1),
+    M = scales::dollar(M, accuracy = 1),
+    SD = scales::dollar(SD, accuracy = 1),
+    Mdn_log = round(Mdn_log, 2),
+    M_log = round(M_log, 2)
+  )
 
 ```
 
-#### Test Name (H3) Results
+### Kruskal-Wallis Test (H3)
 
+```{r kruskal}
+kruskal.test(
+  box_office ~ violence, 
+  data = film_data
+)
+```
+
+#### Kruskal-Wallis Test (H3) Results
+
+A Kruskal-Wallis test was conducted to examine whether worldwide box office revenue differed across violence rating groups. The test was not statistically significant, H(3) = 1.53, p = .676. The null hypothesis is therefore retained, as the data provide no evidence of a relationship between a film's violence rating and its worldwide box office revenue among Oscar Best Picture shortlisted films (2020–2026).
+
+
+### Dunn Post-Hoc Test (H3)
+
+```{r dunn}
+dunn.test(
+  x = film_data$box_office,
+  g = film_data$violence,
+  method = 'bonferroni'
+)
+
+```
+
+#### Dunn Post-Hoc Test (H3) Results
+
+As the Kruskal-Wallis test was not statistically significant, Dunn's pairwise post-hoc comparisons are reported for completeness only and should not be interpreted inferentially. All Bonferroni-corrected pairwise comparisons were non-significant, with p-values ranging from .705 to 1.000, confirming that no specific pair of violence rating groups differed significantly in box office revenue.
+
+### Spearman Correlation (H3)
+
+```{r spearman}
+cor.test(
+  ~ as.integer(violence) + box_office,
+  data   = film_data,
+  method = 'spearman'
+)
+
+```
+#### Spearman Correlation (H3) Results
+
+A Spearman correlation was conducted to examine the monotonic relationship between violence rating and worldwide box office revenue. The warning regarding ties is expected when an ordinal variable with few levels is used and does not invalidate the result. The correlation was weak and not statistically significant, rho = .119, S = 36711, p = .353, consistent with the Kruskal-Wallis finding. The null hypothesis is therefore retained.
 
 ## Data Visualisation
 
-### Visualisation Name (H3)
+### Scatter Plot (H3)
 
-``` {r}
+``` {r scatter plot}
+film_data %>%
+  ggplot(aes(x = violence, y = log_box_office)) +
+  
+  geom_jitter(width = 0.25, color = "#ED8B00FF") +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, col = "#00496FFF") +
 
-# Plot code here!
+  scale_y_continuous(
+    name = 'Worldwide Box Office',
+    breaks = seq(3, 10, by = 0.5),
+    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+  ) +
+    
+    labs(
+    x     = 'Violence Rating',
+    title = 'Worldwide Box Office Revenue by Violence Rating'
+  )
+```
+
+### Violon Plot (H3)
+
+``` {r violin plot}
+film_data %>%
+  ggplot(aes(x = violence, y = log_box_office)) +
+
+  geom_violin(color = "#ED8B00FF", fill = "#EDD746FF") +
+  
+  scale_y_continuous(
+    name = 'Worldwide Box Office',
+    breaks = seq(3, 10, by = 0.5),
+    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+  ) +
+    
+  labs(
+    x     = 'Violence Rating',
+    title = 'Distribution of Box Office Revenue by Violence Rating'
+  )
+
+```
+
+### Box Plot (H3)
+``` {r box plot}
+film_data %>%
+  ggplot(aes(x = violence, y = log_box_office)) +
+
+  geom_boxplot(color = "#ED8B00FF", fill = "#EDD746FF") +
+  
+  
+  scale_y_continuous(
+    name = 'Worldwide Box Office',
+    breaks = seq(3, 10, by = 0.5),
+    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+  ) +
+    
+  labs(
+    x = 'Violence Rating',
+    title = 'Worldwide Box Office Revenue by Violence Rating'
+  )
 
 ```
