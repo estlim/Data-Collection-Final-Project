@@ -46,12 +46,14 @@ Revenue distributions were broadly similar across all four violence rating group
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(dplyr)
-library(readr)
-library(ggplot2)
-library(paletteer)
-library(scales)
-library(dunn.test)
+my_packages <- c("tidyverse", "ggplot2", "paletteer","scales","dunn.test")
+
+for (pkg in my_packages) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+    library(pkg, character.only = TRUE)
+  }
+}
 
 options(scipen = 999)
 
@@ -127,8 +129,8 @@ An ordinary least squares regression was conducted to examine whether IMDb Viole
 
 ```{r Spearman Rho Test H1}
   
-corr_results <- cor.test(x = film_data$violence_coded, y = film_data$bechdel, method = "spearman")
-print(corr_results)
+h1corr_results <- cor.test(x = film_data$violence_coded, y = film_data$bechdel, method = "spearman")
+print(h1corr_results)
 
 ```
 
@@ -232,9 +234,9 @@ There is a relationship between a film being female-directed and non-female-dire
 
 ### Fisher's Exact Test (H2)
 
-```{r}
+```{r fishers test H2}
 
-odds_test <- film_data %>%
+h2odds_test <- film_data %>%
   mutate(director_binary = factor(
       ifelse(gen_dir == "female", "Female", "Non-Female"),
       levels = c("Non-Female", "Female")
@@ -245,15 +247,15 @@ odds_test <- film_data %>%
     )
   )
 
-odds_table <- table(odds_test$director_binary, odds_test$bechdel_binary)
+h2odds_table <- table(h2odds_test$director_binary, h2odds_test$bechdel_binary)
 
 print("2x2 Contingency Table:")
-print(odds_table)
+print(h2odds_table)
 
-odds_results <- fisher.test(odds_table)
+h2odds_results <- fisher.test(h2odds_table)
 
 print("Odds Ratio Test Results:")
-print(odds_results)
+print(h2odds_results)
 
 ```
 
@@ -432,6 +434,7 @@ There is a relationship between a film’s worldwide box office revenue and the 
 
 ##Descriptive Statistics
 ```{r data preparation}
+
 violence_levels <- c('None','Mild','Moderate','Severe')
 
 film_data <- film_data %>%
@@ -483,21 +486,23 @@ film_data %>%
 ### Kruskal-Wallis Test (H3)
 
 ```{r kruskal}
-kruskal.test(
+
+h3krus_results <- kruskal.test(
   box_office ~ violence, 
   data = film_data
 )
+
 ```
 
 #### Kruskal-Wallis Test (H3) Results
 
 A Kruskal-Wallis test was conducted to examine whether worldwide box office revenue differed across violence rating groups. The test was not statistically significant, H(3) = 1.53, p = .676. The null hypothesis is therefore retained, as the data provide no evidence of a relationship between a film's violence rating and its worldwide box office revenue among Oscar Best Picture shortlisted films (2020–2026).
 
-
 ### Dunn Post-Hoc Test (H3)
 
 ```{r dunn}
-dunn.test(
+
+h3dunn_results <- dunn.test(
   x = film_data$box_office,
   g = film_data$violence,
   method = 'bonferroni'
@@ -512,7 +517,8 @@ As the Kruskal-Wallis test was not statistically significant, Dunn's pairwise po
 ### Spearman Correlation (H3)
 
 ```{r spearman}
-cor.test(
+
+h3sp_results <- cor.test(
   ~ as.integer(violence) + box_office,
   data   = film_data,
   method = 'spearman'
@@ -528,16 +534,17 @@ A Spearman correlation was conducted to examine the monotonic relationship betwe
 ### Scatter Plot (H3)
 
 ``` {r scatter plot}
+
 film_data %>%
   ggplot(aes(x = violence, y = log_box_office)) +
-  
   geom_jitter(width = 0.25, color = "#ED8B00FF") +
   geom_smooth(aes(group = 1), method = "lm", se = FALSE, col = "#00496FFF") +
 
   scale_y_continuous(
-    name = 'Worldwide Box Office',
-    breaks = seq(3, 10, by = 0.5),
-    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
+    breaks = seq(3, 10, by = 1),
+    labels = scales::math_format(10^.x),
+    limits = c(3, 10)
   ) +
     
     labs(
@@ -549,15 +556,17 @@ film_data %>%
 ### Violon Plot (H3)
 
 ``` {r violin plot}
+
 film_data %>%
   ggplot(aes(x = violence, y = log_box_office)) +
 
   geom_violin(color = "#ED8B00FF", fill = "#EDD746FF") +
   
   scale_y_continuous(
-    name = 'Worldwide Box Office',
-    breaks = seq(3, 10, by = 0.5),
-    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
+    breaks = seq(3, 10, by = 1),
+    labels = scales::math_format(10^.x),
+    limits = c(3, 10)
   ) +
     
   labs(
@@ -569,6 +578,7 @@ film_data %>%
 
 ### Box Plot (H3)
 ``` {r box plot}
+
 film_data %>%
   ggplot(aes(x = violence, y = log_box_office)) +
 
@@ -576,9 +586,10 @@ film_data %>%
   
   
   scale_y_continuous(
-    name = 'Worldwide Box Office',
-    breaks = seq(3, 10, by = 0.5),
-    labels = c('$1K','$3K', '$10K', '$30K', '$100K', '$300K', '$1M', '$3M', '$10M', '$30M', '$100M', '$300M', '$1B', '$3B', '$10B'),
+    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
+    breaks = seq(3, 10, by = 1),
+    labels = scales::math_format(10^.x),
+    limits = c(3, 10)
   ) +
     
   labs(
