@@ -541,10 +541,8 @@ film_data %>%
   geom_smooth(aes(group = 1), method = "lm", se = FALSE, col = "#00496FFF") +
 
   scale_y_continuous(
-    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
-    breaks = seq(3, 10, by = 1),
-    labels = scales::math_format(10^.x),
-    limits = c(3, 10)
+    name = expression(paste("Worldwide Box Office ($, ", log[10], ")")),
+    breaks = seq(5, 10, by = 1),
   ) +
     
     labs(
