@@ -79,7 +79,7 @@ film_data <- film_data %>%
 
 h1chisq_tbl <- table(film_data$violence, film_data$bechdel)
 
-print("2x4 Contingency Table:")
+print("4x4 Contingency Table:")
 print(h1chisq_tbl)
 
 h1chisq_results <- chisq.test(h1chisq_tbl)
@@ -91,7 +91,7 @@ print(h1chisq_results)
 
 #### Chi-square Test of Independence (H1) Results
 
-A chi-square test of independence was conducted to examine the relationship between IMDb Violence and Gore rating (None, Mild, Moderate, Severe) and the number of Bechdel Test criteria met (0–3) among Oscar Best Picture shortlisted films from 2020 to 2026. As several expected cell counts fell below 5, the result should be interpreted with caution, as the chi-square approximation may be unreliable. The result was not statistically significant, X2 (df = 9, n = 67) = 14.79, p = .097. A Fisher's exact test is therefore recommended as a more appropriate alternative given the sample size.
+A chi-square test of independence was conducted to examine the relationship between IMDb Violence and Gore rating (None, Mild, Moderate, Severe) and the number of Bechdel Test criteria met (0–3) among Oscar Best Picture shortlisted films from 2020 to 2026. As several expected cell counts fell below 5, the result should be interpreted with caution, as the chi-square approximation may be unreliable. The result was not statistically significant, $\chi^2$ (df = 9, n = 67) = 14.79, p = .097. A Fisher's exact test is therefore recommended as a more appropriate alternative given the sample size.
 
 ### Fisher's Exact Test (H1)
 
@@ -143,29 +143,14 @@ A Spearman's rank correlation was conducted to examine the monotonic relationshi
 
 ### Scatterplot (H1)
 
-```{r Scatterplot H1}
-
-film_data %>%
-  ggplot(aes(x = violence, y = bechdel)) +
-  geom_point(color = "#ED8B00FF") +
-  
-  labs(
-    title = "Bechdel Scores by Violence Rating",
-    x = "Violence and Gore Score",
-    y = "Bechdel Test Score")
-
-```
-
-### Scatterplot with Jitter (H1)
-
 ```{r Scatterplot Jitter H1}
 
 film_data %>%
   ggplot(aes(x = violence, y = bechdel)) +
   geom_jitter(width = 0.25, color = "#ED8B00FF") +
   labs(
-    title = "Bechdel Scores by Violence Rating",
-    x = "Violence and Gore Score",
+    title = "Distribution of Bechdel Test Scores by \nViolence and Gore Rating",
+    x = "Violence and Gore Rating",
     y = "Bechdel Test Score")
 
 ```
@@ -174,8 +159,18 @@ film_data %>%
 
 ```{r Scatterplot H1 w Regression}
 
+violence_levels <- c('None','Mild','Moderate','Severe')
+
+film_data <- film_data %>%
+  mutate(violence = factor(
+      violence, 
+      levels = violence_levels, 
+      ordered = TRUE
+      )
+      )
+      
 film_data %>%
-  ggplot(aes(x = violence_coded, y = bechdel)) +
+  ggplot(aes(x = violence, y = bechdel)) +
   geom_jitter(width = 0.25, color = "#ED8B00FF") +
   geom_smooth(
     aes(group = 1), 
@@ -185,13 +180,11 @@ film_data %>%
     ) +
   
   labs(
-    title = "Bechdel Scores by Violence Rating",
-    x = "Violence and Gore Score",
+    title = "Distribution of Bechdel Test Scores by \nViolence and Gore Rating",
+    x = "Violence and Gore Rating",
     y = "Bechdel Test Score")
 
 ```
-
-
 
 ### Violin (H1)
 
@@ -202,7 +195,7 @@ film_data %>%
   geom_violin(color = "#ED8B00FF", fill = "#EDD746FF")+
   
   labs(
-    title = "Distribution of Bechdel Scores by Violence Rating",
+    title = "Distribution of Bechdel Test Scores by \nViolence and Gore Rating",
     x = "Violence and Gore Rating",
     y = "Bechdel Test Score"
   )
@@ -215,10 +208,10 @@ film_data %>%
 
 film_data %>%
   ggplot(aes(x = violence, y = bechdel)) +
-  geom_boxplot(color = "#ED8B00FF", fill = "#EDD746FF")
+  geom_boxplot(color = "#ED8B00FF", fill = "#EDD746FF") +
 
 labs(
-    title = "Distribution of Bechdel Scores by Violence Rating",
+    title = "Distribution of Bechdel Test Scores \nby Violence and Gore Rating",
     x = "Violence and Gore Rating",
     y = "Bechdel Test Score"
 )
@@ -273,7 +266,7 @@ print(h2chisq_tbl)
 
 h2chisq_results <- chisq.test(h2chisq_tbl)
 
-print("Expected Frequencies (Must mostly be >= 5):")
+print("Expected Frequencies (Must mostly be ≥ 5):")
 print(h2chisq_results$expected)
 
 print("Chi-Square Test Results:")
@@ -282,9 +275,9 @@ print(h2chisq_results)
 ggplot(film_data, aes(x = bechdel)) +
   geom_histogram(binwidth = 1, fill = "#0F85A0FF", color = "#89AAC6FF") +
   facet_wrap(~ gen_dir) +
-  theme_minimal() +
+  theme_minimal() + 
   labs(
-    title = "Distribution of Bechdel Scores by Director's Gender \n (Normality Check)",
+    title = "Distribution of Bechdel Test Scores \nby Director Gender",
     x = "Bechdel Test Score",
     y = "Count"
     )
@@ -293,7 +286,7 @@ ggplot(film_data, aes(x = bechdel)) +
 
 #### Chi-square Test (H2) Results
 
-A chi-square test was conducted to examine if there is a relationship between director gender and Bechdel Test score. As the number of female directors in the dataset were too few, the calculated chi-square value was inaccurate. Furthermore, this relationship was not statistically significant, chi-square = 4.8575, df = 3, p = .183.
+A chi-square test was conducted to examine if there is a relationship between director gender and Bechdel Test score. As the number of female directors in the dataset were too few, the calculated chi-square value was inaccurate. Furthermore, this relationship was not statistically significant, $\chi^2$ = 4.8575, df = 3, p = .183.
 
 ### Independent Samples t-test (H2)
 
@@ -319,7 +312,6 @@ film_data %>%
   summarize(median_bechdel = median(bechdel, na.rm = TRUE))
 
 h2mannwhit_results <- wilcox.test(bechdel ~ gen_dir, data = film_data)
-print("Mann-Whitney U Test Results:")
 print(h2mannwhit_results)
 
 ```
@@ -342,8 +334,8 @@ ggplot(film_data, aes(x = gen_dir, fill = factor(bechdel))) +
   scale_fill_paletteer_d("PNWColors::Bay") +
   theme_minimal() +
   labs(
-    title = "Proportion of Bechdel Test Scores by Director Gender",
-    x = "Director's Gender",
+    title = "Proportion of Bechdel Test Scores \nby Director Gender",
+    x = "Director Gender",
     y = "Percentage of Films",
     fill = "Bechdel Test Score"
   )
@@ -370,8 +362,8 @@ ggplot(yearly_trends, aes(x = year, y = Pass_Rate, color = director_binary)) +
   theme_minimal() +
   labs(
     title = "Bechdel Test Pass Rates Over Time (2020-2026)",
-    x = "Year of Release",
-    y = "Percentage of Films Passing (Score = 3)",
+    x = "Year of Award",
+    y = "Percentage of Films that Pass the Bechdel Test (Score = 3)",
     color = "Director Gender"
   )
 
@@ -388,8 +380,8 @@ ggplot(film_data, aes(x = bechdel, color = gen_dir)) +
   scale_color_manual(values = c("#DD4124FF", "#0F85A0FF")) +
   theme_minimal() +
   labs(
-    title = "Cumulative Density of Bechdel Test Scores by Gender",
-    x = "Bechdel Test Score (0 to 3)",
+    title = "Cumulative Density of Bechdel Test Scores \nby Director Gender",
+    x = "Bechdel Test Score",
     y = "Cumulative Proportion",
     color = "Director Gender"
   )
@@ -406,23 +398,29 @@ mosaic_table <- table(film_data$gen_dir, film_data$bechdel_coded)
 
 mosaicplot(
   mosaic_table, 
-  main = "Mosaic Plot of Director Gender \nvs. Bechdel Test Fail/Pass",
+  main = "Proportional Breakdown of Bechdel Test Status \nby Director Gender",
   color = c("#ED8B00FF", "#0F85A0FF"),
   xlab = "Director Gender", 
-  ylab = "Bechdel Status (Fail / Pass)",
+  ylab = "Bechdel Test Status (Pass/Fail)",
   border = "#00496FFF"
-)
+) +
+  theme(
+    plot.title = element_text(size = 12, hjust = 0.5) 
+  )
 
 mosaic_table_more <- table(film_data$gen_dir, film_data$bechdel)
 
 mosaicplot(
   mosaic_table_more, 
-  main = "Mosaic Plot of Director's Gender \nvs. Bechdel Test Score",
+  main = "Proportional Breakdown of Bechdel Test Scores \nby Director Gender",
   color = c("#ED8B00FF", "#89AAC6FF"),
-  xlab = "Director's Gender", 
+  xlab = "Director Gender", 
   ylab = "Bechdel Test Score",
   border = "#00496FFF"
-)
+) +
+  theme(
+    plot.title = element_text(size = 12, hjust = 0.5) 
+  )
 
 ```
 
@@ -462,6 +460,7 @@ film_data <- film_data %>%
 ```
 
 ```{r descriptive statistics}
+
 film_data %>%
   group_by(violence) %>%
   summarize(
@@ -491,6 +490,7 @@ h3krus_results <- kruskal.test(
   box_office ~ violence, 
   data = film_data
 )
+print(h3krus_results)
 
 ```
 
@@ -507,6 +507,7 @@ h3dunn_results <- dunn.test(
   g = film_data$violence,
   method = 'bonferroni'
 )
+print(h3dunn_results)
 
 ```
 
@@ -524,6 +525,8 @@ h3sp_results <- cor.test(
   method = 'spearman'
 )
 
+print(h3sp_results)
+
 ```
 #### Spearman Correlation (H3) Results
 
@@ -539,17 +542,20 @@ film_data %>%
   ggplot(aes(x = violence, y = log_box_office)) +
   geom_jitter(width = 0.25, color = "#ED8B00FF") +
   geom_smooth(aes(group = 1), method = "lm", se = FALSE, col = "#00496FFF") +
-
+  
   scale_y_continuous(
-    name = expression(paste("Worldwide Box Office ($, ", log[10], ")")),
+    name = expression(paste("Worldwide Box Office ",log[10], " ($,",10^n,")")),
     breaks = seq(5, 10, by = 1),
+    limits = c(5, 10)
   ) +
     
     labs(
     x     = 'Violence and Gore Rating',
-    title = 'Worldwide Box Office Revenue by Violence Rating'
+    title = 'Distribution of Box Office Revenue by \nViolence and Gore Rating'
   )
 ```
+
+
 
 ### Violon Plot (H3)
 
@@ -557,24 +563,20 @@ film_data %>%
 
 film_data %>%
   ggplot(aes(x = violence, y = log_box_office)) +
-
   geom_violin(color = "#ED8B00FF", fill = "#EDD746FF") +
-  
   scale_y_continuous(
-    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
-    breaks = seq(3, 10, by = 1),
-    labels = scales::math_format(10^.x),
-    limits = c(3, 10)
+    name = expression(paste("Worldwide Box Office ",log[10], " ($,",10^n,")")),
+    breaks = seq(5, 10, by = 1),
+    limits = c(5, 10)
   ) +
     
-  labs(
-    x     = 'Violence and Gore Rating',
-    title = 'Distribution of Box Office Revenue by Violence Rating'
+  labs(x = 'Violence and Gore Rating',
+    title = 'Distribution of Box Office Revenue by \nViolence and Gore Rating'
   )
-
 ```
 
 ### Box Plot (H3)
+
 ``` {r box plot}
 
 film_data %>%
@@ -584,15 +586,14 @@ film_data %>%
   
   
   scale_y_continuous(
-    name = expression(paste("Worldwide Box Office ", log[10], " ($)")),
-    breaks = seq(3, 10, by = 1),
-    labels = scales::math_format(10^.x),
-    limits = c(3, 10)
+    name = expression(paste("Worldwide Box Office ",log[10], " ($,",10^n,")")),
+    breaks = seq(5, 10, by = 1),
+    limits = c(5, 10)
   ) +
     
   labs(
     x = 'Violence and Gore Rating',
-    title = 'Worldwide Box Office Revenue by Violence Rating'
+    title = 'Distribution of Box Office Revenue by \nViolence and Gore Rating'
   )
 
 ```
