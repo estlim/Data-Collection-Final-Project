@@ -46,7 +46,7 @@ Revenue distributions were broadly similar across all four violence rating group
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-my_packages <- c("tidyverse", "ggplot2", "paletteer","scales","dunn.test")
+my_packages <- c("tidyverse", "paletteer","scales","dunn.test")
 
 for (pkg in my_packages) {
   if (!require(pkg, character.only = TRUE)) {
@@ -597,3 +597,24 @@ film_data %>%
   )
 
 ```
+
+# Citations
+
+R Core Team (2025). _R: A Language and Environment for Statistical Computing_. R Foundation for
+  Statistical Computing, Vienna, Austria. <https://www.R-project.org/>.
+  
+Dinno A (2026). _dunn.test: Dunn's Test of Multiple Comparisons Using Rank Sums_.
+  doi:10.32614/CRAN.package.dunn.test <https://doi.org/10.32614/CRAN.package.dunn.test>, R package
+  
+Hvitfeldt E. (2021). paletteer: Comprehensive Collection of Color Palettes. version 1.3.0.
+  https://github.com/EmilHvitfeldt/paletteer
+
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L,
+  Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu
+  V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” _Journal of
+  Open Source Software_, *4*(43), 1686. doi:10.21105/joss.01686
+  <https://doi.org/10.21105/joss.01686>.
+  
+Wickham H, Pedersen T, Seidel D (2025). _scales: Scale Functions for Visualization_.
+  doi:10.32614/CRAN.package.scales <https://doi.org/10.32614/CRAN.package.scales>, R package version
+  1.4.0, <https://CRAN.R-project.org/package=scales>.
