@@ -235,7 +235,7 @@ h2odds_test <- film_data %>%
       levels = c("Non-Female", "Female")
       ),
     bechdel_binary = factor(
-      ifelse(bechdel == 3, "Pass", "Fail"),
+      ifelse(bechdel_coded == "Pass", "Pass", "Fail"),
       levels = c("Fail", "Pass")
     )
   )
@@ -318,7 +318,7 @@ print(h2mannwhit_results)
 
 #### Mann-Whitney U Test (H2) Results
 
-In order to account for few cell counts for female director variable, and to treat the Bechdel Test score as ordinal, a Mann-Whitney U Test was conducted to determine if there was a significant difference in Bechdel Test scores between female-directed and non-female-directed Oscar-nominated films from 2000 to 2026. The median Bechdel Test score for female-directed films (Mdn = 3) was not significantly different from non-female-directed films (Mdn = 3), U = 329.5, p = 0.147.
+In order to account for few cell counts for female director variable, and to treat the Bechdel Test score as ordinal, a Mann-Whitney U Test was conducted to determine if there was a significant difference in Bechdel Test scores between female-directed and non-female-directed Oscar-nominated films from 2000 to 2026. The median Bechdel Test score for female-directed films (Mdn = 3) was not significantly different from non-female-directed films (Mdn = 3), U = 329.5, p = .147.
 
 ## H2 Data Visualisation
 
