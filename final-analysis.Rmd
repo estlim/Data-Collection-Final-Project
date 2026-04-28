@@ -115,9 +115,28 @@ A Fisher's exact test was conducted to examine the association between IMDb Viol
 
 ```{r OLS H1}
 
-h1ols <- lm(film_data$bechdel ~ film_data$violence, film_data = ols_data) 
+violence_levels <- c('None','Mild','Moderate','Severe')
 
-summary(h1ols)
+film_data <- film_data %>%
+  mutate(violence = factor(
+      violence, 
+      levels = violence_levels, 
+      ordered = TRUE
+      )
+      )
+
+h1ols <- lm(film_data$bechdel ~ film_data$violence, data = film_data) 
+
+ggplot(data = film_data, aes(x = violence, y = bechdel)) +
+  geom_jitter(width = 0.2, height = 0.1, alpha = 0.5, color = "#ED8B00FF") +
+  stat_summary(fun = mean, geom = "point", color = "#00496FFF", size = 3) +
+  stat_summary(fun = mean, geom = "line", aes(group = 1), color = "#00496FFF", linewidth = 1) +
+  
+  labs(
+    title = "Bechdel Test Scores by IMDb Violence Rating",
+    x = "IMDb Violence and Gore Rating",
+    y = "Bechdel Test Score (0 to 3)"
+  )
 
 ```
 
