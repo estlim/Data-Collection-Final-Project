@@ -133,7 +133,7 @@ ggplot(data = film_data, aes(x = violence, y = bechdel)) +
   stat_summary(fun = mean, geom = "line", aes(group = 1), color = "#00496FFF", linewidth = 1) +
   
   labs(
-    title = "Bechdel Test Scores by IMDb Violence Rating",
+    title = "Bechdel Test Scores by Violence and Gore Rating",
     x = "IMDb Violence and Gore Rating",
     y = "Bechdel Test Score (0 to 3)"
   )
