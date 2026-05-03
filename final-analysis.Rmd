@@ -1,8 +1,7 @@
 ---
 title: Analysis of Violence and Gore Ratings and Bechdel Test Scores for Oscars Shortlisted Best Picture Films
   from 2020 to 2026
-author: "Esther Lim, Ethan Sanders, Kamila Kwiatkowska"
-date: "2026-04-19"
+date: "2026-05-05"
 output:
   word_document: default
   html_document: default
